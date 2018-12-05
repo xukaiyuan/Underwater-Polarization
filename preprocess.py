@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 import statistics as st
 
 def rgb2gray(rgb):
@@ -56,30 +55,3 @@ def imgToStokes(imgs, k):
 			stokesSet[int(i / k), int(j / k)] = curStoke
 
 	return stokesSet
-
-'''
-test = mpimg.imread("rgb45.jpg")
-test_gray = rgb2gray(test)
-plt.imshow(test_gray, cmap = plt.get_cmap('gray'))
-plt.show()
-print(intensity(test_gray))
-
-imgs = [mpimg.imread("rgb45.jpg")] * 4
-test = [[[254, 254, 254], [254, 254, 254]], [[255, 253, 254], [255, 253, 254]]]
-
-print(type(imgToStokes(imgs, 2)[0, 0]))
-'''
-#import os
-#print(os.path.pardir)
-
-img2stoke = True
-
-if(img2stoke):
-	img0 = mpimg.imread("../data/p27 h206SW/polarization/IMG_0643_0.JPG")
-	img1 = mpimg.imread("../data/p27 h206SW/polarization/IMG_0644_45.JPG")
-	img2 = mpimg.imread("../data/p27 h206SW/polarization/IMG_0645_90.JPG")
-	img3 = mpimg.imread("../data/p27 h206SW/polarization/IMG_0646_135.JPG")
-
-	imgs = [img0, img1, img2, img3]
-
-	np.save("p27 h206S.npy", imgToStokes(imgs, 50))

@@ -181,31 +181,3 @@ class model:
 				angleOfPolarization[i, j] = angle
 
 		return angleOfPolarization
-
-image_aop = False
-lookUpTable = True
-stoketable_aop = True
-
-test = model()
-if(image_aop):
-	stokeImage = np.load("p27 h206S.npy")
-	print(stokeImage.shape)
-	angle = test.stokeToAngleOfPolarization(stokeImage)
-	np.save("p27 h206S_aop.npy", angle)
-
-if(lookUpTable):
-	stokeTable = np.zeros((91, 361, 4))
-
-	heading = deg2rad(190)
-	pitch = deg2rad(27)
-
-	for i in range(-45, 46):
-		for j in range(-180, 181):
-			stokeTable[i, j] = test.stokeVector(deg2rad(j), deg2rad(i), 1, 1.33, heading, pitch)
-
-	np.save("stokeVector_190.npy", stokeTable)
-
-if(stoketable_aop):
-	stokeVector = np.load("stokeVector_190.npy")
-	stokeAngle = test.stokeToAngleOfPolarization(stokeVector)
-	np.save("stokeTableAngle_190.npy", stokeAngle)
