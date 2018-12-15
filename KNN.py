@@ -1,16 +1,19 @@
 import heapq
 import matplotlib.pyplot as plt
 import numpy as np 
+import sys
 import statistics as st 
+
 def distance(p1, p2):
-	return st.angleDifference(p1, p2)
-	'''
-	p1 = (p1 + st.pi) % (2*st.pi)
-	p2 = (p2 + st.pi) % (2*st.pi)
-	return (p1-p2) % (2*st.pi)
-	'''
+	# return the angle difference of two polarization angles
+	# input: angle of polarizations in rad
+	# output: difference of angle in rad, from 0 to pi
+	return abs(st.angleDifference(p1, p2))
 
 def getaverage(pq, k=1000):
+	# get the average of 1000 closest points and then plot
+	# input: pq is a priority queue
+	# no output but the plot of the points 
 	ratio = []
 	newpq = []
 	for i in range(len(pq)):
@@ -23,27 +26,38 @@ def getaverage(pq, k=1000):
 			else:
 				heapq.heappush(newpq, pq[i])
 
-
-
+	xarr = []
+	yarr = []
 	for i in range(len(newpq)):
-		ratio.append(1/newpq[i][0])
+		if newpq[i][0] != 0:
+			xarr.append(newpq[i][2]-180.0)
+			yarr.append(newpq[i][1])
+			ratio.append(1/newpq[i][0])
+
+	# calculate weighted mean
 	sumnum = sum(ratio)
 	ratio = np.array(ratio)/sumnum
 	idx = 0
 	jdx = 0
-	for i in range(len(newpq)):
+	for i in range(len(ratio)):
 		idx += newpq[i][1]*ratio[i]
 		jdx += newpq[i][2]*ratio[i]
-	print(idx)
-	print(jdx)
+	print('predicted solar zenith angle %f' %idx)
+	print('predicted heading relative to the Sun' %(jdx-180))
 
-
+	plt.plot(xarr, yarr, 'ro')
+	plt.xlabel('Heading relative to Sun')
+	plt.ylabel('Solar Zenith Angle')
+	plt.show()
 
 def getknn(base, k, datapoint):
+	# every data point, get 3 closest point from lookup table
+	# input: look-up table, number of points need to choose in one comparison, the data
+	# output: a priority queue of the results
 	rowbase = len(base)
 	colbase = len(base[0])
 	pq = []
-	for i in range(50):
+	for i in range(rowbase):
 		for j in range(colbase):
 			if i == 0:
 				continue
@@ -58,22 +72,14 @@ def getknn(base, k, datapoint):
 					heapq.heappush(pq, (-curdist, i, j))
 				else:
 					heapq.heappush(pq, tmp)
-
 	return pq 
-
-def myplot(data, base):
-	xarr = []
-	yarr = []
-	for i in range(len(data)):
-		xarr.append(data[i][1])
-		yarr.append(data[i][2])
-	getaverage(data)
-
-	plt.plot(xarr, yarr, 'ro')
-	#plt.axis([0, len(base[0]), 0, len(base)])
-	plt.show()
-
-def knn(data, base):
+	
+def knn(npdata, npbase):
+	# knn algorithm to find the cloestest points in the comparison
+	# input: angle of polarization of images (ndarray), look-up table of angle of polarization (ndarray)
+	# no output but the plots and the average results
+	data = npdata.tolist()
+	base = npbase.tolist()
 	rowdata = len(data)
 	coldata = len(data[0])
 	k = 3
@@ -85,34 +91,22 @@ def knn(data, base):
 		print('finish row: %d' %i)
 
 	print('begin printing')
-	myplot(finaldata, base)
+	getaverage(finaldata)
 
-
-#mydata = np.random.rand(10, 20)
-#mybase = np.random.rand(91,361)
-
-#mydata = mydata.tolist()
-#mybase = mybase.tolist()
-
-#knn(mydata, mybase)
-data_27_206 = np.load('p27 h190S_aop.npy')
-data_27_206 = data_27_206.tolist()
-
-
-
-base_27_206 = np.load('stokeTableAngle_190.npy')
-#base_27_190 = np.load('test.npy')
-base_27_206 = base_27_206.tolist()
-plt.subplot(211)
-plt.imshow(data_27_206)
-plt.subplot(212)
-plt.imshow(base_27_206)
-
-plt.colorbar()
-plt.show()
-
-knn(data_27_206,base_27_206)
-
-#plt.plot(newdata)
-#plt.show()
+def plot_look_up(data, base)
+	# plot data and lookup table
+	# input: angle of polarization of images (ndarray), look-up table of angle of polarization (ndarray)
+	# no output but the plot of heatmap of the look-up table
+	data_lst = data.tolist()
+	base_lst = base.tolist()
+	plt.subplot(211)
+	plt.imshow(data_lst)
+	plt.title('Polarized angle from photo')
+	plt.subplot(212)
+	plt.imshow(base_lst, extent=[-180.0,180.0,90.0,0.0])
+	plt.title('Lookup table for AoP of Sun')
+	plt.xlabel('Heading relative to Sun')
+	plt.ylabel('Solar Zenith Angle')
+	plt.colorbar()
+	plt.show()
 

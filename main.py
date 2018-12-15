@@ -6,41 +6,44 @@ import matplotlib.image as mpimg
 import numpy as np
 from preprocess import *
 from model import *
+from KNN import *
 
 # flags to control different session
-img2stoke = False
-image_aop = False
-lookUpTable = False
-lookUpTable_aop = False
+img2stoke = True
+image_aop = True
+lookUpTable = True
+lookUpTable_aop = True
+knn = False
+plot = False
 
 # path of the images
-path = "../data/p27 h206SW/polarization/"
+path = "../data/p27 h239SW/polarization/"
 
 # name of the raw Stoke vector file
-nameOfStoke = "p27 h206S.npy"
+nameOfStoke = "p27 h239SW.npy"
 
 # name of angle of polarization of Image Stoke vector
-nameOfAopImage = "p27 h206S_aop.npy"
+nameOfAopImage = "p27 h239SW_aop.npy"
 
 # name of look up table of Stoke vectors
-nameOfLutStoke = "stokeVector_206.npy"
+nameOfLutStoke = "stokeVector_p27_239.npy"
 
 # name of look up tabel of angle of polarization
-nameOfAop = "stokeTableAngle_206.npy"
+nameOfAop = "stokeTableAngle_p27_239.npy"
 
 '''
 heading and pitch of the camera
 heading is measured eastward with North as 0
 pitch is measured from horizon with horizon as 0
 '''
-heading = deg2rad(206)
+heading = deg2rad(239)
 pitch = deg2rad(27)
 
 if(img2stoke):
-	img0 = mpimg.imread(path + "IMG_0643_0.JPG")
-	img1 = mpimg.imread(path + "IMG_0644_45.JPG")
-	img2 = mpimg.imread(path + "IMG_0645_90.JPG")
-	img3 = mpimg.imread(path + "IMG_0646_135.JPG")
+	img0 = mpimg.imread(path + "IMG_0657_0.JPG")
+	img1 = mpimg.imread(path + "IMG_0658_45.JPG")
+	img2 = mpimg.imread(path + "IMG_0659_90.JPG")
+	img3 = mpimg.imread(path + "IMG_0660_135.JPG")
 
 	imgs = [img0, img1, img2, img3]
 
@@ -67,3 +70,8 @@ if(lookUpTable_aop):
 	stokeAngle = optical.stokeToAngleOfPolarization(stokeVector)
 	np.save(nameOfAop, stokeAngle)
 
+if(knn):
+	knn(nameOfAopImage, nameOfAop)
+
+if(plot):
+	plot_look_up(nameOfAopImage, nameOfAop)
